@@ -1,37 +1,13 @@
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView , TouchableOpacity} from 'react-native'
 import { Camera, CameraType } from 'expo-camera'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import { FontAwesome } from '@expo/vector-icons'
 
 export default function App() {
-
-  // const [type, setType] = useState(CameraType.back)
-  // const [permission, requestPermssion] = Camera.useCameraPermissions()
-
-  // // useEffect (() => {
-  // //   (async () => {
-  // //     console.log('aaaa')
-  // //     const { status } = await Camera.requestCameraPermissionsAsync()
-  // //     setHasPermission( status === 'granted')
-  // //     console.log('bbbb')
-  // //   })
-  // // }, [])
-
-  // if (!permission){
-  //   <View>
-  //     <Text>
-  //       No access to camera
-  //     </Text>
-  //   </View>
-  // }
-
-  // if (!permission.granted){
-  //   console.log('aaaaaa')
-  // }
   const [cameraPermission, setCameraPermission] = useState(null)
-  const [galleryPermission, setGalleryPermission] = useState(null)
 
-  const [camera, setCamera] = useState(null)
-  const [imageUri, setImageUri] = useState(null)
+  const camRef = useRef(null)
+
   const [type, setType] = useState(CameraType.back)
 
   const permissionFunction = async () => {
@@ -41,10 +17,7 @@ export default function App() {
 
     console.log(cameraPermission)
 
-    const imagePermission = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    console.log(imagePermission)
-
-    if (imagePermission.status !== 'granted' && cameraPermssion.status !== 'granted'){
+    if (cameraPermssion.status !== 'granted'){
       alert('Permission for media access needed')
     }
     }
@@ -59,7 +32,24 @@ export default function App() {
       <Camera
         style={styles.camera}
         type={type}
-      ></Camera>
+      >
+        <View
+        style={styles.contentButtons}
+        >
+          <TouchableOpacity
+            style={styles.buttonFlip}
+            onPress={ () => {
+              setType(
+                type == CameraType.back ? CameraType.front : CameraType.back
+              )}
+            }
+          >
+            <FontAwesome name="exchange" size={23} color="red"></FontAwesome>
+          </TouchableOpacity>
+        </View>
+
+
+      </Camera>
     </SafeAreaView>
   )
 }
@@ -73,4 +63,21 @@ const styles = StyleSheet.create({
     width:"100%",
     height:"100%"
   },
+  contentButtons: {
+    flex: 1,
+    backgroundColor:"transparent",
+    flexDirection:"row",
+  },
+  buttonFlip: {
+    position:"absolute",
+    bottom:50,
+    left:30,
+    justifyContent:"center",
+    alignItems:"center",
+    backgroundColor:"#FFF",
+    margin:20,
+    height:50,
+    width:50,
+    borderRadius:50
+  }
 })
